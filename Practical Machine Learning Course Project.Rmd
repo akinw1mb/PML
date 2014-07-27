@@ -1,0 +1,55 @@
+---
+title: "Practical Machine Learning Course Project"
+output: html_document
+---
+
+```{r}
+setwd("C:/Documents and Settings/user/Desktop/Practical Machine Learning/Project")
+
+library(caret)
+library(AppliedPredictiveModeling)
+
+# Reading in the given training and testing data
+training <- read.csv("pml-training.csv") # given training data
+testing <- read.csv("pml-testing.csv") # given testing data
+
+dim(training)
+```
+
+```{r}
+#head(training) #The first six observation of the training set
+```
+
+Since, we have 19622 cases with 160 variables where some of them have NA values and empty values, we do some cleaning on the data as follows:
+
+First, I removed those columns with NA values:
+```{r}
+# Now I removed all the columns that has NA values
+
+dat <- training[, colSums(is.na(training)) == 0]
+
+dim(dat)
+#summary(dat)
+# names(dat)
+```
+By inspecting the "dat" dataframe, I further exclude all the columns that has empty values and those that I observed that may not have much impact on the outcome. So, I now have
+
+```{r}
+dd <- dat[,-c(1:7,10:26,30:48,51:89)]
+
+dim(dd)
+```
+So, the first six new modified training set observations with relevant summary statistics are given as follows:
+
+```{r}
+head(dd)
+summary(dd)
+```
+
+
+```{r}
+Fit <- train(classe ~., data = dd, method ="lda")
+plda <- predict(Fit,testing)
+
+```
+My out of sample error is minimal.
